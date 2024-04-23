@@ -49,29 +49,36 @@ pipeline {
             }
         }
     }
-
     post {
         always {
-            emailext(
-                subject: "Jenkins Pipeline Notification for Job: ${env.JOB_NAME}",
-                body: """<h1>Pipeline Execution Notification</h1>
-                         <p><strong>Job:</strong> ${env.JOB_NAME}</p>
-                         <p><strong>Build:</strong> #${env.BUILD_NUMBER}</p>
-                         <p><strong>Status:</strong> ${currentBuild.currentResult}</p>
-                         <p><strong>Details:</strong> Check the console output <a href="${env.BUILD_URL}console">here</a>.</p>""",
-                to: 'navinraaj98@gmail.com'
-            )
-        }
-        failure {
-            emailext(
+            script {
+                def jobName = env.JOB_NAME
+                def buildNumber = env.BUILD_NUMBER
+                def pipelineStatus = currentBuild.result ?: 'UNKNOWN'
+                def bannerColor = pipelineStatus.toUpperCase() == 'SUCCESS' ? 'green' : 'red'
+
+                def body = """<html>
+                                <body>
+                                    <div style="border: 4px solid ${bannerColor}; padding: 10px;">
+                                        <h2>${jobName} - Build ${buildNumber}</h2>
+                                        <div style="background-color: ${bannerColor}; padding: 10px;">
+                                            <h3 style="color: white;">Pipeline Status: ${pipelineStatus.toUpperCase()}</h3>
+                                        </div>
+                                        <p>Check the <a href="${env.BUILD_URL}console">console output</a>.</p>
+                                    </div>
+                                </body>
+                              </html>"""
+
+                emailext(
                     subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
                     body: body,
-                    to: 'navinraaj98@gmail.com',
-                    from: 'navin@example.com',
-                    replyTo: 'navin@example.com',
+                    to: 'jaiswaladi246@gmail.com',
+                    from: 'jenkins@example.com',
+                    replyTo: 'jenkins@example.com',
                     mimeType: 'text/html',
-                    attachmentsPattern: '*.txt'
+                    attachmentsPattern: '*.txt' // Attachments pattern to attach files if any
                 )
+            }
         }
     }
 }
