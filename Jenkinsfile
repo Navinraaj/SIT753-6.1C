@@ -59,14 +59,14 @@ pipeline {
                          <p><strong>Build:</strong> #${env.BUILD_NUMBER}</p>
                          <p><strong>Status:</strong> ${currentBuild.currentResult}</p>
                          <p><strong>Details:</strong> Check the console output <a href="${env.BUILD_URL}console">here</a>.</p>""",
-                to: 's222569633@deakin.edu.au'
+                to: 'navinraaj98@gmail.com'
             )
         }
         failure {
             emailext(
                 subject: "Jenkins Pipeline Failure in Job: ${env.JOB_NAME}",
                 body: "The build ${env.JOB_NAME} #${env.BUILD_NUMBER} has failed. Check the details at ${env.BUILD_URL}console.",
-                to: 's222569633@deakin.edu.au'
+                to: 'navinraaj98@gmail.com'
             )
         }
     }
