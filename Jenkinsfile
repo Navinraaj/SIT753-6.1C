@@ -72,9 +72,9 @@ pipeline {
                 emailext(
                     subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
                     body: body,
-                    to: 'jaiswaladi246@gmail.com',
-                    from: 'jenkins@example.com',
-                    replyTo: 'jenkins@example.com',
+                    to: 'navinraaj98@gmail.com',
+                    from: 'navinraaj@example.com',
+                    replyTo: 'navinraaj@example.com',
                     mimeType: 'text/html',
                     attachmentsPattern: '*.txt' // Attachments pattern to attach files if any
                 )
