@@ -4,7 +4,7 @@ pipeline {
     environment {
         DIRECTORY_PATH = '/path/to/your/code'
         TESTING_ENVIRONMENT = 'Test'
-        PRODUCTION_ENVIRONMENT = 'NavinProduction' // Replace 'Production' with your actual production environment name if needed
+        PRODUCTION_ENVIRONMENT = 'NavinProduction'
     }
 
     stages {
@@ -47,6 +47,27 @@ pipeline {
             steps {
                 echo "Deploy the code to the production environment: ${env.PRODUCTION_ENVIRONMENT}"
             }
+        }
+    }
+
+    post {
+        always {
+            emailext(
+                subject: "Jenkins Pipeline Notification for Job: ${env.JOB_NAME}",
+                body: """<h1>Pipeline Execution Notification</h1>
+                         <p><strong>Job:</strong> ${env.JOB_NAME}</p>
+                         <p><strong>Build:</strong> #${env.BUILD_NUMBER}</p>
+                         <p><strong>Status:</strong> ${currentBuild.currentResult}</p>
+                         <p><strong>Details:</strong> Check the console output <a href="${env.BUILD_URL}console">here</a>.</p>""",
+                to: 's222569633@deakin.edu.au'
+            )
+        }
+        failure {
+            emailext(
+                subject: "Jenkins Pipeline Failure in Job: ${env.JOB_NAME}",
+                body: "The build ${env.JOB_NAME} #${env.BUILD_NUMBER} has failed. Check the details at ${env.BUILD_URL}console.",
+                to: 's222569633@deakin.edu.au'
+            )
         }
     }
 }
