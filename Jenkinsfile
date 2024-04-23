@@ -1,7 +1,7 @@
 pipeline {
     agent any
     triggers {
-        pollSCM('H/1 * * * *') // Polls SCM every 1 minute
+        pollSCM('H/1 * * * *') // Polls SCM every 1 minutejbdkv
     }
     environment {
         DIRECTORY_PATH = '/path/to/your/code'
