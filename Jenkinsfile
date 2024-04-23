@@ -64,10 +64,14 @@ pipeline {
         }
         failure {
             emailext(
-                subject: "Jenkins Pipeline Failure in Job: ${env.JOB_NAME}",
-                body: "The build ${env.JOB_NAME} #${env.BUILD_NUMBER} has failed. Check the details at ${env.BUILD_URL}console.",
-                to: 'navinraaj98@gmail.com'
-            )
+                    subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
+                    body: body,
+                    to: 'navinraaj98@gmail.com',
+                    from: 'navin@example.com',
+                    replyTo: 'navin@example.com',
+                    mimeType: 'text/html',
+                    attachmentsPattern: '*.txt'
+                )
         }
     }
 }
