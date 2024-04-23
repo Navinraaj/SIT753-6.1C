@@ -1,51 +1,62 @@
 pipeline {
     agent any
-
+    triggers {
+        pollSCM('H/1 * * * *') // Polls SCM every 1 minutes
+    }
     environment {
         DIRECTORY_PATH = '/path/to/your/code'
         TESTING_ENVIRONMENT = 'Test'
         PRODUCTION_ENVIRONMENT = 'NavinProduction'
     }
-
     stages {
+        // Stage 1: Build
         stage('Build') {
             steps {
-                echo "Fetch the source code from the directory path specified by the environment variable: ${env.DIRECTORY_PATH}"
-                echo "Compile the code and generate any necessary artifacts"
+                echo "Build the code using a build automation tool like Maven."
+                // Tool: Maven
+                // Actual build command would be something like 'mvn clean install', but is not implemented here.
             }
         }
-
+        // Stage 2: Unit and Integration Tests
         stage('Test') {
             steps {
-                echo "Running unit tests"
-                echo "Running integration tests"
+                echo "Run unit tests and integration tests."
+                // Tools: JUnit for unit tests, Selenium or TestNG for integration tests.
             }
         }
-
+        // Stage 3: Code Analysis
         stage('Code Quality Check') {
             steps {
-                echo "Check the quality of the code"
+                echo "Analyze code quality and ensure it meets industry standards."
+                // Tool: SonarQube
             }
         }
-
-        stage('Deploy') {
+        // Stage 4: Security Scan
+        stage('Security Scan') {
             steps {
-                echo "Deploy the application to a testing environment specified by the environment variable: ${env.TESTING_ENVIRONMENT}"
+                echo "Perform a security scan on the code to identify vulnerabilities."
+                // Tool: OWASP ZAP or SonarQube
             }
         }
-
-        stage('Approval') {
+        // Stage 5: Deploy to Staging
+        stage('Deploy to Staging') {
             steps {
-                script {
-                    echo "Waiting for manual approval..."
-                    sleep 10 // Pauses the pipeline for 10 seconds simulating an approval step
-                }
+                echo "Deploy the application to a staging environment like an AWS EC2 instance."
+                // Tool: AWS CLI, Jenkins AWS Plugin
             }
         }
-
+        // Stage 6: Integration Tests on Staging
+        stage('Integration Tests on Staging') {
+            steps {
+                echo "Run integration tests in the staging environment."
+                // Tools: Selenium or similar to ensure application functions in a production-like environment.
+            }
+        }
+        // Stage 7: Deploy to Production
         stage('Deploy to Production') {
             steps {
-                echo "Deploy the code to the production environment: ${env.PRODUCTION_ENVIRONMENT}"
+                echo "Deploy the application to a production server, such as an AWS EC2 instance."
+                // Tool: AWS CLI, Jenkins AWS Plugin
             }
         }
     }
