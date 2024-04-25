@@ -1,7 +1,7 @@
 pipeline {
     agent any
     triggers {
-        pollSCM('H/1 * * * *') // Polls SCM every 1 minutejbdkv
+        pollSCM('H/1 * * * *') // Polls SCM every 1 minute
     }
     environment {
         DIRECTORY_PATH = '/path/to/your/code'
@@ -24,7 +24,7 @@ pipeline {
             }
             post {
                 always {
-                    sendNotificationEmail('Test Stage')
+                    sendNotificationEmail('Test Stage', 'unit_test_results.txt')
                 }
             }
         }
@@ -43,7 +43,7 @@ pipeline {
             }
             post {
                 always {
-                    sendNotificationEmail('Security Scan Stage')
+                    sendNotificationEmail('Security Scan Stage', 'security_scan_results.txt')
                 }
             }
         }
@@ -71,17 +71,22 @@ pipeline {
     }
     post {
         always {
-            sendNotificationEmail('Pipeline')
+            sendNotificationEmail('Pipeline', null)
         }
     }
 }
 
-def sendNotificationEmail(String stageName) {
+def sendNotificationEmail(String stageName, String logFileName) {
     def jobName = env.JOB_NAME
     def buildNumber = env.BUILD_NUMBER
     def pipelineStatus = currentBuild.result ?: 'UNKNOWN'
     def bannerColor = pipelineStatus.toUpperCase() == 'SUCCESS' ? 'green' : 'red'
-    
+
+    // Capture the console log only if logFileName is provided
+    if (logFileName != null) {
+        writeFile(file: logFileName, text: currentBuild.rawBuild.getLog(1000).join("\n"))
+    }
+
     def subject = "${jobName} - ${stageName} - Build #${buildNumber} - ${pipelineStatus.toUpperCase()}"
     def body = """<html>
                     <body>
@@ -102,6 +107,6 @@ def sendNotificationEmail(String stageName) {
         from: 'navinraaj@example.com',
         replyTo: 'navinraaj@example.com',
         mimeType: 'text/html',
-        //attachmentsPattern: '*.txt' // Attachments pattern to attach files if any
+        attachmentsPattern: logFileName ?: '' // Only attach the file if logFileName is provided
     )
 }
